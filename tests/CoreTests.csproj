@@ -1,0 +1,2 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><RestorePackagesPath>../.nuget</RestorePackagesPath></PropertyGroup><ItemGroup><Compile Include="../desktop/Models.cs"/><Compile Include="../desktop/RuntimeFiles.cs"/><Compile Include="../desktop/NativeEngine.cs"/><Compile Include="../desktop/StudioService.cs"/><Compile Include="../desktop/StudioLibrary.cs"/><Compile Include="../desktop/SpeechValidation.cs"/></ItemGroup></Project>
+

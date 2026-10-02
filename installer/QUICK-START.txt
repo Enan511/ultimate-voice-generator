@@ -1,0 +1,41 @@
+ULTIMATE VOICE GENERATOR 3.1
+
+INSTALL
+Keep Ultimate Voice Generator Setup.exe and every .bin file together.
+Run Setup.exe, choose an empty destination folder and select your shortcuts.
+The uninstaller option is checked by default. Uncheck it only if you want a
+manual-removal installation without a Windows Installed Apps entry.
+
+Use a writable folder, such as the suggested folder under your user account.
+Windows 10/11 x64, an AVX2-capable CPU, 16 GB RAM and about 4 GB free space
+are recommended. A GPU with a current Vulkan driver accelerates generation;
+CPU mode is available in Settings. RTX 3070 Ti is a suitable intended target,
+but this build was tested locally on an RX 6700 XT / Ryzen 5600X.
+
+The .NET runtime and all voice/recognition models are included.
+If Microsoft Edge WebView2 Runtime is absent, Setup downloads it from
+Microsoft. That prerequisite needs internet once; voice generation is local.
+
+USE
+Launch Ultimate Voice Generator from your chosen shortcut or install folder.
+The bundled reference voice is ready to use, with no acknowledgement step.
+Choose an output folder in Settings. Enter one prompt per line, review, then
+confirm generation. Natural punctuation is preserved. FLAC is the default;
+WAV and MP3 are also available.
+
+Every result has Play, Regenerate and Delete record & file controls.
+History contains previous takes. Preview speed begins at 1.0x; Update File
+saves a pitch-preserving speed change. The speech check retries dropped or
+changed words; unresolved differences are flagged for listening review.
+
+REMOVE
+If selected during installation, use Windows Settings > Apps > Installed Apps
+or the Uninstall shortcut. Settings, imported reference copies and recorded
+browser cache are removed. You can also choose to delete recordings created
+by the app. Unrelated files and original references are left alone. Files
+changed outside the app are preserved by runtime cleanup.
+If you opted out of the uninstaller, you must remove your installation and
+shortcuts manually. Do not delete unrelated files you added to that folder.
+
+This package contains no personal generation history or generated outputs.
+Keep all setup files together when copying to another PC.
