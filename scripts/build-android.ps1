@@ -21,6 +21,7 @@ foreach($model in $bundledModels){
 }
 Write-Output 'Verified and bundled Qwen 1.7B, its codec, and Whisper transcription models.'
 if(!$SkipNative){
+ New-Item -ItemType Directory -Force android/app/src/main/jniLibs/arm64-v8a | Out-Null
  $cmake=Join-Path $env:ANDROID_HOME 'cmake/3.22.1/bin/cmake.exe'
  $ninja=Join-Path $env:ANDROID_HOME 'cmake/3.22.1/bin/ninja.exe'
  foreach($engine in @('qwen','whisper','audio')){

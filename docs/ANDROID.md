@@ -38,7 +38,7 @@ npm ci
 node scripts/download-qwen.mjs
 ```
 
-This downloads checksum-verified models into ignored `engines/` folders (plus the shared Windows Whisper dependency, unused by Android). Obtain the pinned native sources by extracting `Android-native-sources.zip` from the release at the repository root, or clone them as follows:
+This downloads checksum-verified models into ignored `engines/` folders (plus the shared Windows Whisper dependency, unused by Android). Obtain the pinned native sources by extracting **only the `vendor/` directory** from the release's `Android-native-sources.zip` into the repository root; keep the current repository's application and build scripts. Alternatively, clone the dependencies as follows:
 
 ```powershell
 git clone https://github.com/ServeurpersoCom/qwentts.cpp.git vendor/qwentts
