@@ -31,12 +31,12 @@ CUDA is experimental: it requires an x64 Visual Studio developer shell and a mat
 
 ## Supply a reference
 
-The public source does not bundle a third-party demo voice. Before building a distributable, create:
+The default distributable contains no reference voice. Users choose one in Settings and receive an automatic, editable transcript. To opt into bundling a recording you are permitted to redistribute, create:
 
 - `references/reference.mp3`: a clean recording you may use and redistribute.
 - `references/reference.txt`: its exact spoken transcript, in UTF-8.
 
-These two files are private/ignored by Git. Do not put generated prompts or unrelated recordings here. In the installed app, you can select a different reference in Settings. An empty transcript can be transcribed locally, but compare it with the recording for best results. No acknowledgement checkbox is required.
+These two files are private/ignored by Git and are only copied when building with `./scripts/build.ps1 -IncludeReference`. Do not put generated prompts or unrelated recordings here. In the installed app, selecting a reference starts automatic transcription. Compare and edit the transcript before saving. No acknowledgement checkbox is required.
 
 ## Build and launch
 
@@ -80,7 +80,7 @@ For a release, additionally test real generation, ASR, playback, speed replaceme
 - Missing compiler or Vulkan: check PATH and VULKAN_SDK, or use the CPU backend.
 - Missing model/hash failure: rerun setup; do not disable integrity checks.
 - Missing WebView2: install Microsoft's Evergreen Runtime.
-- Missing reference during build: add both reference files above.
+- Missing reference at generation time: choose your own recording in Settings and save its transcript.
 - DLL load error: keep the entire payload together, including native runtime DLLs; do not copy only the EXE.
 - Failed or Needs review audio: inspect the recognized words, pronunciation rules and reference transcript, then retry or edit the prompt.
 

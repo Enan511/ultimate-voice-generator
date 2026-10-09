@@ -1,9 +1,9 @@
-param([switch]$SkipRestore,[string]$MsvcRedistPath='C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Redist/MSVC')
+param([switch]$SkipRestore,[switch]$IncludeReference,[string]$MsvcRedistPath='C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Redist/MSVC')
 $ErrorActionPreference='Stop'
 $project=[IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 Set-Location -LiteralPath $project
 $env:DOTNET_CLI_TELEMETRY_OPTOUT='1'
-foreach($required in @('references/reference.mp3','references/reference.txt','engines/qwen/tts-server.exe','engines/qwen/tts-server-cpu.exe','engines/ffmpeg.exe')){
+foreach($required in @('engines/qwen/tts-server.exe','engines/qwen/tts-server-cpu.exe','engines/ffmpeg.exe')){
     if(!(Test-Path -LiteralPath $required)){throw "Missing $required. Follow docs/SETUP.md before building."}
 }
 npm.cmd run build
@@ -36,7 +36,7 @@ foreach($name in @('msvcp140.dll','vcruntime140.dll','vcruntime140_1.dll','vcomp
 }
 Copy-Item engines/ffmpeg.exe,engines/manifest.json "$payload/engines"
 # Explicit allowlist: never copy user references, settings, history, outputs or test artifacts.
-Copy-Item references/reference.mp3,references/reference.txt "$payload/references"
+if($IncludeReference){Copy-Item references/reference.mp3,references/reference.txt "$payload/references"}
 Copy-Item installer/QUICK-START.txt,THIRD_PARTY.md,LICENSE "$payload"
 foreach($name in @('ffmpeg-binary.txt','ffmpeg-static.txt','ggml.txt','lucide.txt','qwen-model.txt','qwentts.txt','react.txt','tailwind.txt','dotnet.txt','whisper-cpp.txt','whisper-model.txt','mingw-runtime')){
     Copy-Item -LiteralPath (Join-Path licenses $name) -Destination "$payload/licenses" -Recurse

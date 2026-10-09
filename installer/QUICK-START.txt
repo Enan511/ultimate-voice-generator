@@ -1,4 +1,4 @@
-ULTIMATE VOICE GENERATOR 3.1
+ULTIMATE VOICE GENERATOR 3.2.1
 
 INSTALL
 Keep Ultimate Voice Generator Setup.exe and every .bin file together.
@@ -18,7 +18,8 @@ Microsoft. That prerequisite needs internet once; voice generation is local.
 
 USE
 Launch Ultimate Voice Generator from your chosen shortcut or install folder.
-The bundled reference voice is ready to use, with no acknowledgement step.
+Choose your own reference recording in Settings; no personal voice is bundled.
+Choosing a new reference transcribes it automatically. Edit the transcript before saving.
 Choose an output folder in Settings. Enter one prompt per line, review, then
 confirm generation. Natural punctuation is preserved. FLAC is the default;
 WAV and MP3 are also available.

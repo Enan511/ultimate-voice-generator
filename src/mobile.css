@@ -1,0 +1,73 @@
+/* Android uses the same accessible controls and state as the desktop UI. */
+.android {color-scheme:dark;--font-sans:system-ui,-apple-system,sans-serif;background:#0b1018;color:#e9eef7;font-size:15px;-webkit-tap-highlight-color:transparent}
+.android body{background:#0b1018;color:#e9eef7;overscroll-behavior-y:contain}
+.android .app-shell{display:flex;flex-direction:column;min-height:100dvh}
+.android .sidebar{position:static;height:auto;width:auto;padding:18px 22px;background:#0b1018;border:0;gap:0}
+.android .brand{color:#f1f6fc;font-size:.9rem;letter-spacing:.1em}
+.android .brand-sub{display:block;font-size:.58rem}
+.android .brand-icon{background:#162337;border-radius:15px;border:1px solid #25364b;padding:6px}
+.android .brand-icon img{width:2rem;height:2rem}
+.android .nav-label,.android .sidebar-bottom,.android .topbar{display:none}
+.android .sidebar nav{position:fixed;z-index:30;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;background:#101925f5;backdrop-filter:blur(18px);border-top:1px solid #273449;padding:9px 8px 12px;margin:0}
+.android .nav-item{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0;min-height:54px;padding:7px 2px;justify-content:center;align-items:center;font-size:.68rem;line-height:1.3;border-radius:14px;color:#9bacc2;background:transparent}
+.android .nav-item svg{width:21px;height:21px}
+.android .nav-item.active{background:#193a3e;color:#84e0cf}
+.android .nav-count{position:absolute;right:7px;top:1px;font-size:.62rem;padding:1px 5px;background:#2b5660;color:#d9fff7}
+.android .main-shell{margin:0;min-width:0;width:100%}
+.android main{max-width:880px;margin:auto;padding:12px 20px 105px}
+.android .heading{margin-bottom:22px;animation:mobile-enter .24s ease-out}
+.android .heading h1{font-size:clamp(1.7rem,6vw,2.7rem);line-height:1.16;letter-spacing:-.04em;color:#f1f5fc}
+.android .heading p,.android .muted,.android .section-head p,.android .output-summary,.android .input-footer,.android .format-option>span{color:#a6b4c7}
+.android .eyebrow{color:#6acdbc;font-size:.64rem;letter-spacing:.16em}
+.android h2,.android h3,.android strong,.android label{color:#e4edf9}
+.android .surface,.android .regen-dialog{background:#131e2d;border-color:#29394c;color:#e4edf9;box-shadow:0 10px 35px #00000016;border-radius:20px}
+.android .surface{animation:mobile-enter .24s ease-out}
+.android .settings-section,.android .queue-card{padding:20px}
+.android textarea,.android input:not([type=checkbox]):not([type=range]),.android select{color:#e8eef8!important;background:#0e1723!important;border-color:#31445b!important;caret-color:#82e0ce;font-size:16px!important;border-radius:12px}
+.android textarea::placeholder,.android input::placeholder{color:#7589a1}
+.android .script-input{min-height:31dvh;padding:20px;border:0!important}
+.android .compose-panel .section-head{padding:18px 20px;border-color:#29394c}
+.android .input-footer{border-color:#29394c;background:#101a28;padding:12px 20px;border-radius:0 0 20px 20px}
+.android .button{min-height:48px;border-radius:13px;font-size:.87rem;transition:background .16s,transform .16s;touch-action:manipulation}
+.android .button:active,.android .nav-item:active{transform:scale(.97)}
+.android .button.primary{background:#83dfcb;color:#062f2a;border-color:#83dfcb;font-weight:700}
+.android .button.secondary,.android .button.ghost,.android .icon-btn{background:#1b2b3e;color:#d1dfef;border-color:#33455d}
+.android .icon-btn{min-height:44px;min-width:44px;border-radius:12px}
+.android .button:disabled,.android .icon-btn:disabled{opacity:.45}
+.android .path-picker,.android .clean-preview,.android .info-strip,.android .validation-details,.android .job-actions,.android .action-footer{border-color:#2c3e52}
+.android .clean-preview,.android .path-picker{background:#0e1723;color:#acbbce;border-radius:12px}
+.android .format-option{background:#0e1723;border-color:#2c3e52;color:#d9e6f7;border-radius:12px}
+.android .format-option.chosen{background:#173d3e;border-color:#69cbb8}
+.android .format-option.chosen strong,.android .format-option.chosen svg{color:#99eddc}
+.android .status.completed{background:#163e35;color:#8ce1bd}
+.android .status.pending{background:#293449;color:#bdcbe0}
+.android .status.processing{background:#163e4a;color:#94dfed}
+.android .status.failed{background:#492631;color:#ffb1be}
+.android .status.review{background:#45391f;color:#f5d589}
+.android .alert,.android .field-error,.android .job-error{background:#39232c;color:#ffc1c7;border-color:#69414c;border-radius:12px}
+.android .danger{color:#ffa4b3}
+.android .filters{display:flex;overflow:auto;gap:5px;scrollbar-width:none;max-width:100%;padding-bottom:5px}
+.android .filters button{flex-shrink:0;min-height:42px;background:#142235;color:#b8c7da;border-radius:12px;border-color:#2c3e52}
+.android .filters button.active{background:#204449;color:#a8f0de}
+.android .progress-track,.android .progress-bar{background-color:#22374d}
+.android progress{accent-color:#83dfcb;width:100%;height:8px}
+.android audio{width:100%;max-width:100%;height:48px;filter:contrast(.95)}
+.android .speed-row input{min-height:36px;accent-color:#83dfcb}
+.android .job-text,.android .path{overflow-wrap:anywhere}
+.android .regen-dialog{width:calc(100% - 24px);max-width:600px;max-height:88dvh;padding:24px;overflow:auto}
+.android .regen-dialog::backdrop{background:#030912be;backdrop-filter:blur(5px)}
+.android .regen-dialog[open]{animation:mobile-sheet .22s ease-out}
+.android .dialog-actions{position:sticky;bottom:-24px;background:#131e2d;padding:15px 0 8px;z-index:2}
+.android .model-setup{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;padding:22px;margin:0 0 25px;background:linear-gradient(130deg,#1b323a,#172333);border-color:#33525e}
+.android .model-setup p{color:#b2c5d3;line-height:1.6;margin:.8rem 0}
+.android .model-icon{color:#8de5d2;padding-top:5px}
+.android .model-setup .button{width:100%}
+@keyframes mobile-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mobile-sheet{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.android .action-footer{flex-direction:column;align-items:stretch}.android .button.push-right{margin:0}.android .model-setup{grid-template-columns:1fr}.android .model-icon{display:none}.android .job-top{flex-wrap:wrap}.android .format-grid{grid-template-columns:1fr}.android .path-picker{flex-wrap:wrap}.android .path-picker .button{width:100%}.android .queue-actions,.android .job-actions{flex-wrap:wrap;gap:8px}.android .engine-settings{flex-direction:column;align-items:stretch}}
+@media(prefers-reduced-motion:reduce){.android *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.android .sticky-footer{bottom:86px;background:#152334;border-color:#30445b}
+.android .pill{background:#1b4240;color:#a6e9d7}
+.android .text-link{color:#9ce7d5}
+.android .step-number{background:#1b3941;color:#9ce7d5}
+.android button:focus-visible,.android textarea:focus-visible,.android input:focus-visible,.android select:focus-visible{outline:2px solid #83dfcb;outline-offset:3px}

@@ -2,7 +2,7 @@
 
 No script in this repository uploads or publishes anything.
 
-1. Complete [setup](SETUP.md), including a reference recording you have permission to redistribute and an accurate transcript. Build with scripts/build.ps1.
+1. Complete [setup](SETUP.md). Build with scripts/build.ps1; default release builds exclude personal reference audio. Users choose their own reference in Settings.
 2. Install [Inno Setup](https://jrsoftware.org/isdl.php) compatible with this script (the prototype was built with Inno Setup 7).
 3. Download Microsoft's [Evergreen WebView2 bootstrapper](https://developer.microsoft.com/microsoft-edge/webview2/#download-section) into `installer/tools/MicrosoftEdgeWebview2Setup.exe`. Check its valid Microsoft digital signature. It is an installer prerequisite, not source.
 4. Compile using the installed compiler, adjusting its path if needed:
@@ -28,3 +28,7 @@ No script in this repository uploads or publishes anything.
 Upload the source repository folder only. Model weights, compiled engines, installers and generated recordings are excluded by .gitignore. GitHub's automatic source ZIP will therefore require the documented setup process.
 
 If publishing installers later, attach setup and each BIN separately to a release. Each GitHub release asset must be under 2 GiB; the existing combined multi-gigabyte repack ZIP exceeds that limit. See [GitHub release limits](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas). Do not add the large repack ZIP to Git history.
+
+For Android, build using [the Android guide](ANDROID.md), then run `node scripts/package-android-release.mjs`. This produces two APK byte parts, an integrity manifest and a joining script in `release/github-v3.2.1`. Test the join script in a separate output folder before publishing. Upload both parts, `Android-parts.json`, `Join-Android-APK.ps1`, native dependency source/notices, installation instructions and checksums as release assets. Do not publish the parts without the manifest and instructions. Retain the original signed APK locally.
+
+Create a draft release for the exact source commit, attach and verify all assets, then publish it. Android remains a preview until actual phone generation has been tested; distinguish build/UI checks from phone performance claims.

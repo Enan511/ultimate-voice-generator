@@ -4,7 +4,7 @@
 [Setup]
 AppId={{95B2600F-C743-4DB5-84AB-E64F998AC621}
 AppName=Ultimate Voice Generator
-AppVersion=3.1.0
+AppVersion=3.2.1
 AppPublisher=Ultimate Voice Generator
 AppCopyright=Third-party notices are included with the application.
 DefaultDirName={localappdata}\Programs\Ultimate Voice Generator
@@ -129,4 +129,3 @@ begin
     end;
   end;
 end;
-

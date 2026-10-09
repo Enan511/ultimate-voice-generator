@@ -1,23 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Plus, Trash2, Volume2, LoaderCircle } from "lucide-react";
 
-export function ReferenceSettings({ value, change, act }) {
+export function ReferenceSettings({ value, change, act, onBusy = () => {} }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const name = value.reference?.split(/[\\/]/).pop();
+  const latest = useRef(value);
+  const mounted = useRef(true);
+  useEffect(() => { latest.current = value; }, [value]);
+  useEffect(() => () => { mounted.current = false; }, []);
+  const transcribe = async (path) => {
+    const text = await act("draftReference", path);
+    if (mounted.current) change({ ...latest.current, reference: path, referenceTranscript: text, referenceVerified: false, referenceHash: "" });
+  };
   const pick = async () => {
+    setBusy(true); onBusy(true); setError("");
     try {
       const path = await act("pickReference");
-      if (path)
-        change({
-          ...value,
+      if (path) {
+        const next = {
+          ...latest.current,
           reference: path,
           referenceTranscript: "",
           referenceVerified: false,
           referenceHash: "",
-        });
+        };
+        latest.current = next; change(next);
+        await transcribe(path);
+      }
     } catch (e) {
-      setError(e.message);
+      if (mounted.current) setError("Could not transcribe automatically. You can type the transcript or try again. " + e.message);
+    } finally {
+      if (mounted.current) { setBusy(false); onBusy(false); }
     }
   };
   return (
@@ -30,7 +44,7 @@ export function ReferenceSettings({ value, change, act }) {
       <div className="path-picker">
         <Volume2 size={20} />
         <span className="path">{name || "Choose a reference"}</span>
-        <button className="button secondary" onClick={pick}>
+        <button className="button secondary" onClick={pick} disabled={busy}>
           Choose reference
         </button>
       </div>
@@ -47,6 +61,7 @@ export function ReferenceSettings({ value, change, act }) {
         <textarea
           aria-label="Reference transcript"
           rows={4}
+          disabled={busy}
           value={value.referenceTranscript || ""}
           onChange={(e) =>
             change({
@@ -62,27 +77,21 @@ export function ReferenceSettings({ value, change, act }) {
         className="button secondary"
         disabled={busy || !value.reference}
         onClick={async () => {
-          setBusy(true);
+          setBusy(true); onBusy(true);
           setError("");
           try {
-            const text = await act("draftReference", value.reference);
-            change({
-              ...value,
-              referenceTranscript: text,
-              referenceVerified: false,
-              referenceHash: "",
-            });
+            await transcribe(value.reference);
           } catch (e) {
             setError(e.message);
           } finally {
-            setBusy(false);
+            if (mounted.current) { setBusy(false); onBusy(false); }
           }
         }}
       >
         {busy ? <LoaderCircle className="spin" size={16} /> : null}
-        {busy ? "Transcribing locally…" : "Draft transcript with local ASR"}
+        {busy ? "Transcribing on this device…" : "Transcribe again"}
       </button>
-      <p className="small muted">The bundled voice is ready to use. For a new reference, a transcript is prepared automatically when you save; you can edit it here.</p>
+      <p className="small muted" role="status">{busy ? "Preparing your transcript. You can edit it when transcription finishes." : "Choosing a reference starts automatic transcription. Edit the words above if anything was misheard, then save your settings."}</p>
       <label>
         Delivery goal
         <input

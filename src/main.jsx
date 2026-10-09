@@ -24,10 +24,12 @@ import {
   Volume2,
 } from "lucide-react";
 import { sanitize, stageLines, pronounce } from "./text";
-import { command, subscribe, audioUrl } from "./bridge";
+import { command, subscribe, audioUrl, isAndroid } from "./bridge";
+import { MobileModels } from "./MobileModels";
 import { History, Recording } from "./Recordings";
 import { ReferenceSettings, LexiconSettings } from "./VoiceSettings";
 import "./styles.css";
+import "./mobile.css";
 
 const initial = {
   settings: {
@@ -208,7 +210,7 @@ function App() {
           <div className="local-badge">
             <span className="dot" /> Local processing
           </div>
-          <p>Your scripts stay on this computer.</p>
+          <p>Your scripts stay on this device.</p>
           <div className="engine-label">{state.engine}</div>
         </div>
       </aside>
@@ -228,9 +230,10 @@ function App() {
                       : "Create audio"}
             </strong>
           </span>
-          <span className="version">VERSION 3.1</span>
+          <span className="version">VERSION 3.2</span>
         </header>
         <main>
+          {isAndroid && <MobileModels state={state} act={act} />}
           {error && (
             <div className="alert" role="alert">
               <AlertCircle size={18} />
@@ -724,7 +727,7 @@ const QueueItem = memo(function QueueItem({ job, act, onRegenerate }) {
               className="button ghost"
               onClick={() => act("openFolder", job.id)}
             >
-              <FolderOpen size={15} /> Show file
+              <FolderOpen size={15} /> {isAndroid ? "Save a copy" : "Show file"}
             </button>
           )}
           {job.seconds > 0 && (
@@ -747,6 +750,7 @@ const QueueItem = memo(function QueueItem({ job, act, onRegenerate }) {
 });
 
 function Settings({ settings, act, onError, processing }) {
+  const [transcribing, setTranscribing] = useState(false);
   const [value, setValue] = useState(settings),
     [saved, setSaved] = useState(false),
     [saving, setSaving] = useState(false);
@@ -763,7 +767,8 @@ function Settings({ settings, act, onError, processing }) {
   const save = async () => {
     setSaving(true);
     try {
-      await act("settings", value);
+      const result = await act("settings", value);
+      if (result?.settings) setValue(result.settings);
       setSaved(true);
     } catch (e) {
       onError(e.message);
@@ -786,7 +791,7 @@ function Settings({ settings, act, onError, processing }) {
         </p>
         <div className="path-picker">
           <FolderOpen size={20} />
-          <span className="path">{value.folder || "No folder selected"}</span>
+          <span className="path">{isAndroid && value.folder?.startsWith("content:") ? "Selected phone folder" : value.folder || "No folder selected"}</span>
           <button
             className="button secondary"
             onClick={() => pick("pickFolder", "folder")}
@@ -799,7 +804,7 @@ function Settings({ settings, act, onError, processing }) {
           {[
             ["flac", "FLAC", "Lossless, smaller files"],
             ["wav", "WAV", "Uncompressed audio"],
-            ["mp3", "MP3", "192 kbps, easy sharing"],
+            ["mp3", "MP3", "Easy sharing"],
           ].map(([key, title, desc]) => (
             <button
               key={key}
@@ -816,7 +821,7 @@ function Settings({ settings, act, onError, processing }) {
           ))}
         </div>
       </section>
-      <ReferenceSettings value={value} change={change} act={act} />
+      <ReferenceSettings value={value} change={change} act={act} onBusy={setTranscribing} />
       <LexiconSettings value={value} change={change} />
       <section className="surface settings-section">
         <label className="checkbox">
@@ -831,7 +836,8 @@ function Settings({ settings, act, onError, processing }) {
       <section className="surface settings-section engine-settings">
         <div>
           <h2>Local engine</h2>
-          <label>Compute<select aria-label="Compute" value={value.backend||'auto'} onChange={e=>change({...value,backend:e.target.value})}><option value="auto">GPU when available · Vulkan</option><option value="cpu">CPU · compatibility mode</option></select></label>
+          {!isAndroid && <label>Compute<select aria-label="Compute" value={value.backend||'auto'} onChange={e=>change({...value,backend:e.target.value})}><option value="auto">GPU when available · Vulkan</option><option value="cpu">CPU · compatibility mode</option></select></label>}
+          {isAndroid && <p className="muted">On-device ARM64 processing · no PC connection. Large batches can warm your phone and take time.</p>}
           <p className="muted">
             Qwen3-TTS 1.7B Base · local C++ inference. Whisper checks spoken
             words. The model loads only when generation starts. Release it to
@@ -854,7 +860,7 @@ function Settings({ settings, act, onError, processing }) {
         </span>
         <button
           className="button primary"
-          disabled={saving || !value.folder}
+          disabled={saving || transcribing || !value.folder}
           onClick={save}
         >
           {saving ? (

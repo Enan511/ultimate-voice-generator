@@ -31,7 +31,8 @@ public sealed partial class StudioService : IDisposable
     {
         this.root=root;Owned=new RuntimeFiles(root);statePath=Path.Combine(root,"user-data","state.json");
         this.engine=engine??new NativeEngine(root);
-        settings=new(){Folder=Path.Combine(root,"recordings"),Reference=Path.Combine(root,"references","reference.mp3")};
+        var bundledReference=Path.Combine(root,"references","reference.mp3");
+        settings=new(){Folder=Path.Combine(root,"recordings"),Reference=File.Exists(bundledReference)?bundledReference:""};
         var transcript=Path.Combine(root,"references","reference.txt");if(File.Exists(transcript))settings.ReferenceTranscript=File.ReadAllText(transcript).Trim();
         if(File.Exists(statePath))try{
             var saved=JsonSerializer.Deserialize<DiskState>(File.ReadAllText(statePath),Json);

@@ -1,6 +1,6 @@
 # Ultimate Voice Generator
 
-A local Windows desktop app for batch voice generation using Qwen3-TTS 1.7B Base. Built with C#/.NET 8, WebView2, React and native C++ inference engines. No Python or paid speech API is required.
+A local voice generator for **Windows PC and Android**, using Qwen3-TTS 1.7B Base. Windows uses C#/.NET 8 and WebView2; Android uses a Java host and ARM64 native C++ engines. Both share the React interface. No Python or paid speech API is required.
 
 ![Application icon](assets/ultimate_voice_generator.ico)
 
@@ -13,6 +13,19 @@ A local Windows desktop app for batch voice generation using Qwen3-TTS 1.7B Base
 - History, editable regeneration, per-output deletion and inline playback.
 - Playback starts at 1.0x; permanent speed changes preserve pitch and are checked again.
 - Native installer with optional shortcuts and uninstaller.
+- Dark, responsive Android interface; all speech processing runs on the phone.
+- Automatic reference transcription with an editable transcript on both platforms.
+
+## Download Windows or Android
+
+Get packaged software from [GitHub Releases](https://github.com/Enan511/ultimate-voice-generator/releases). This repository contains source code for both versions; installers, APKs and model weights are release assets only.
+
+| Platform | Download and install |
+| --- | --- |
+| Windows 10/11 x64 | Download the setup EXE and **both matching BIN files** into one folder, then run setup. |
+| Android 16+ ARM64 | Download **both APK parts** and `Join-Android-APK.ps1` into one folder on a PC. Run the script to recreate the signed APK, then transfer and install it. The split is only for GitHub's download limit. A PC is not needed to run the installed app. |
+
+Both packages include pretrained Qwen and Whisper models. Android prepares its included files on first launch; no download or training is required on the phone. Choose your own reference recording in Settings. Allow about 10 GB free for Android installation and initial setup. Android is a development-signed prototype; performance on the intended Nothing Phone (3a), 12 GB device has not been measured.
 
 ## Get started
 
@@ -25,6 +38,8 @@ Windows x64 and an AVX2-capable CPU are required. Vulkan is the default GPU back
 ## Documentation
 
 - [Setup, development and tests](docs/SETUP.md)
+- [Android setup, build and installation](docs/ANDROID.md)
+- [Android native dependencies](docs/ANDROID-NATIVE-BUILD.md)
 - [Using the app](docs/USAGE.md)
 - [Architecture and folder structure](docs/ARCHITECTURE.md)
 - [Packaging and release checklist](docs/RELEASING.md)

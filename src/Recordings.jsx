@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { audioUrl } from "./bridge";
+import { audioUrl, isAndroid } from "./bridge";
 import {
   RotateCw,
   Trash2,
@@ -277,7 +277,7 @@ export function Recording({ job, act, onRegenerate, history = false }) {
             className="button ghost"
             onClick={() => act("openFolder", job.id).catch(() => {})}
           >
-            <FolderOpen size={15} /> Show file
+            <FolderOpen size={15} /> {isAndroid ? "Save a copy" : "Show file"}
           </button>
         )}
         {(

@@ -42,6 +42,7 @@ const browser = await chromium.launch({
   args: ["--autoplay-policy=no-user-gesture-required"],
 });
 const page = await browser.newPage({ viewport: { width: 1280, height: 950 } });
+if (process.env.UVG_MOBILE_TEST === "1") await page.addInitScript(() => { window.__UVG_MOBILE_TEST__ = true; });
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 await page.addInitScript(() => {
@@ -203,11 +204,11 @@ try {
   await page.getByRole("button", { name: "Confirm", exact: true }).click();
   await page.waitForTimeout(200);
   assert.equal(await page.locator("article").count(), 1);
-  for (const width of [1280, 760, 420, 390]) {
+  for (const width of [1280, 760, 420, 390, 360, 320]) {
     await page.setViewportSize({ width, height: 950 });
     for (const view of ["History", "Settings", "Create audio"]) {
       await nav(view).click();
-      await page.waitForTimeout(60);
+      await page.waitForTimeout(320);
       assert.ok(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth + 1,
@@ -216,7 +217,7 @@ try {
       );
       if (width === 1280 || width === 390)
         await page.screenshot({
-          path: `test-artifacts/screenshots-v3/${view.replaceAll(" ", "-")}-${width}.png`,
+          path: `test-artifacts/screenshots-v3/${process.env.UVG_MOBILE_TEST ? "android-" : ""}${view.replaceAll(" ", "-")}-${width}.png`,
           fullPage: true,
         });
     }
@@ -224,14 +225,42 @@ try {
   await nav("Settings").click();
   await page.getByRole("button", { name: "Choose folder" }).click();
   await page
-    .getByRole("button", { name: "Draft transcript with local ASR" })
+    .getByRole("button", { name: "Transcribe again" })
     .click();
   assert.equal(
     await page.getByLabel("Reference transcript").inputValue(),
     "Good morning. All systems are operational.",
   );
+  await page.getByRole("button", { name: "Choose reference", exact:true }).click();
+  await page.waitForFunction(() => window.__requests.filter(x=>x.name==='draftReference').length >= 2);
+  await page.getByLabel("Reference transcript").fill("Good morning, sir. Corrected by the user.");
   assert.equal(await page.getByLabel("I listened and confirmed", { exact: false }).count(),0);
   await page.getByRole("button", { name: "Save settings" }).click();
+  assert.equal(await page.evaluate(()=>window.__requests.filter(x=>x.name==='settings').at(-1).payload.referenceTranscript),"Good morning, sir. Corrected by the user.");
+  if(process.env.UVG_MOBILE_TEST === "1") {
+    await page.evaluate(async()=>{
+      const snapshot=await window.__JARVIS_TEST__.command("bootstrap");
+      snapshot.models={ready:false,bundled:true,busy:false,percent:0,message:"",error:""};
+      window.__uvgReceive({type:"snapshot",data:snapshot});
+    });
+    const setup=page.getByRole("region",{name:"Offline voice setup"});
+    await setup.getByText("No download or training is needed.",{exact:false}).waitFor();
+    await setup.getByRole("button",{name:"Prepare included models"}).click();
+    assert.equal(await page.evaluate(()=>window.__requests.at(-1).name),"downloadModels");
+    await page.evaluate(async()=>{
+      const snapshot=await window.__JARVIS_TEST__.command("bootstrap");
+      snapshot.models={ready:false,bundled:true,busy:true,percent:42,message:"Preparing included model 1 of 3",error:""};
+      window.__uvgReceive({type:"snapshot",data:snapshot});
+    });
+    assert.equal(await setup.getByRole("button").isDisabled(),true);
+    assert.equal(await setup.getByRole("progressbar").getAttribute("value"),"42");
+    await page.evaluate(async()=>{
+      const snapshot=await window.__JARVIS_TEST__.command("bootstrap");
+      snapshot.models={ready:true,bundled:true,busy:false,percent:100};
+      window.__uvgReceive({type:"snapshot",data:snapshot});
+    });
+    await setup.waitFor({state:"detached"});
+  }
   assert.deepEqual(errors, []);
   fs.writeFileSync(
     "test-artifacts/ui-v3-results.json",
@@ -252,6 +281,7 @@ try {
           "listening scores",
           "reference draft without acknowledgement",
           "responsive layouts",
+          ...(process.env.UVG_MOBILE_TEST === "1" ? ["included-model setup and progress"] : []),
           "no React errors",
         ],
       },
@@ -266,5 +296,3 @@ try {
   await browser.close();
   server.close();
 }
-
-
