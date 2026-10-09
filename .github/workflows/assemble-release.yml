@@ -1,0 +1,26 @@
+name: Assemble prepared Windows and Android release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing draft release containing verified assembly inputs
+        required: true
+        default: v3.2.1
+permissions:
+  contents: write
+concurrency:
+  group: prepared-release-${{ inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Restore verified packages, upload and publish
+        shell: pwsh
+        run: ./scripts/assemble-cloud-release.ps1 -Tag $env:RELEASE_TAG

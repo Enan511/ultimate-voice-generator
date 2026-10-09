@@ -1,7 +1,7 @@
 ULTIMATE VOICE GENERATOR 3.2.1
 
 INSTALL
-Keep Ultimate Voice Generator Setup.exe and every .bin file together.
+Keep Ultimate-Voice-Generator-Setup.exe and every matching .bin file together.
 Run Setup.exe, choose an empty destination folder and select your shortcuts.
 The uninstaller option is checked by default. Uncheck it only if you want a
 manual-removal installation without a Windows Installed Apps entry.

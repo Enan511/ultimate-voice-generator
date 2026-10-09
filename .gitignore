@@ -3,6 +3,7 @@ node_modules/
 .nuget/
 .toolchain/
 .tools/
+.model-cache/
 .npm-cache/
 vendor/
 engines/

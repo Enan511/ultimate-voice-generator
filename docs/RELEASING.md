@@ -1,6 +1,6 @@
 # Packaging and releasing
 
-No script in this repository uploads or publishes anything.
+Local build scripts do not publish. The manually dispatched `assemble-release.yml` workflow uploads and publishes an existing prepared draft release after validating its assets; do not dispatch it until the prepared inputs have been reviewed.
 
 1. Complete [setup](SETUP.md). Build with scripts/build.ps1; default release builds exclude personal reference audio. Users choose their own reference in Settings.
 2. Install [Inno Setup](https://jrsoftware.org/isdl.php) compatible with this script (the prototype was built with Inno Setup 7).
@@ -32,3 +32,7 @@ If publishing installers later, attach setup and each BIN separately to a releas
 For Android, build using [the Android guide](ANDROID.md), then run `node scripts/package-android-release.mjs`. This produces two APK byte parts, an integrity manifest and a joining script in `release/github-v3.2.1`. Test the join script in a separate output folder before publishing. Upload both parts, `Android-parts.json`, `Join-Android-APK.ps1`, native dependency source/notices, installation instructions and checksums as release assets. Do not publish the parts without the manifest and instructions. Retain the original signed APK locally.
 
 Create a draft release for the exact source commit, attach and verify all assets, then publish it. Android remains a preview until actual phone generation has been tested; distinguish build/UI checks from phone performance claims.
+
+## Optional cloud assembly for slow upload connections
+
+The prepared-release workflow downloads the same public model weights directly on a GitHub runner. It uses a clean Windows runtime seed and a small template of the original Android APK, both attached to a draft release, with SHA-256 values in `Cloud-inputs.json`. `release-apk-template.mjs` removes only the stored model byte ranges from the APK; restoring the exact model bytes must reproduce the original whole-file SHA-256, including its existing signature. No signing key is uploaded. The workflow builds the Windows installer from the prepared runtime, splits the restored APK, verifies GitHub's checksum for every final asset, deletes temporary assembly assets and publishes the preview. Source remains in Git; executable payloads only travel through draft release assets. This workflow assembles previously tested binaries; it is not a clean source compilation pipeline.
