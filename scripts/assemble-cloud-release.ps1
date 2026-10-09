@@ -20,7 +20,10 @@ if($LASTEXITCODE -ne 0){throw 'Runtime extraction failed'}
 if(Test-Path installer/payload/user-data){throw 'Runtime seed contains personal data'}
 if(Test-Path installer/payload/recordings){throw 'Runtime seed contains recordings'}
 if(@(Get-ChildItem installer/payload/references -File -ErrorAction SilentlyContinue).Count){throw 'Runtime seed contains reference audio'}
-Copy-Item -LiteralPath installer/QUICK-START.txt,THIRD_PARTY.md,LICENSE -Destination installer/payload -Force
+foreach($name in @('Android-native-sources.zip','Android-NDK-NOTICE.txt','FFmpeg-6.1.1-source.tar.xz','FFmpeg-build-and-license.txt')){
+ gh release download $Tag --pattern $name --dir $assets
+ if($LASTEXITCODE -ne 0){throw "Could not retrieve dependency source/notice: $name"}
+}
 
 $cache=Join-Path $root '.model-cache'
 New-Item -ItemType Directory -Force $cache | Out-Null
@@ -46,6 +49,33 @@ node scripts/package-android-release.mjs
 if($LASTEXITCODE -ne 0){throw 'APK splitting failed'}
 # The two release parts now contain the byte-verified APK; recover runner disk space.
 Remove-Item -LiteralPath (Join-Path $root 'release/Ultimate Voice Generator Android.apk') -Force
+
+# Rebuild the desktop host/UI on the runner; reuse only the locally tested native engines.
+$nativeRoot=Join-Path $root 'installer/payload/engines'
+foreach($file in Get-ChildItem -LiteralPath $nativeRoot -Recurse -File | Where-Object {$_.Extension -ne '.gguf' -and $_.Name -ne 'ggml-small.en.bin'}){
+ $destination=Join-Path (Join-Path $root 'engines') ([IO.Path]::GetRelativePath($nativeRoot,$file.FullName))
+ New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($destination)) -Force | Out-Null
+ Copy-Item -LiteralPath $file.FullName -Destination $destination
+}
+foreach($model in $models){
+ $destination=Join-Path $root ('engines/'+$model.Folder)
+ New-Item -ItemType Directory -Path $destination -Force | Out-Null
+ New-Item -ItemType HardLink -Path (Join-Path $destination $model.Name) -Target (Join-Path $cache $model.Name) | Out-Null
+}
+$redist=Join-Path $root '.tools/release-redist/1/x64'
+New-Item -ItemType Directory -Force $redist | Out-Null
+foreach($name in @('msvcp140.dll','vcruntime140.dll','vcruntime140_1.dll','vcomp140.dll')){Copy-Item -LiteralPath (Join-Path $nativeRoot ('whisper/'+$name)) -Destination $redist}
+npm.cmd ci
+if($LASTEXITCODE -ne 0){throw 'Frontend dependency installation failed'}
+Copy-Item -LiteralPath node_modules/ffmpeg-static/ffmpeg.exe -Destination engines/ffmpeg.exe
+if((Get-FileHash engines/ffmpeg.exe -Algorithm SHA256).Hash -ne '04e1307997530f9cf2fe35cba2ca7e8875ca91da02f89d6c7243df819c94ad00'){throw 'FFmpeg differs from the tested binary'}
+& ./scripts/build.ps1 -MsvcRedistPath (Join-Path $root '.tools/release-redist')
+if($LASTEXITCODE -ne 0){throw 'Desktop build failed'}
+# The built payload has its own copies. Remove only the temporary model links.
+foreach($model in $models){
+ Remove-Item -LiteralPath (Join-Path $cache $model.Name) -Force
+ Remove-Item -LiteralPath (Join-Path $root ('engines/'+$model.Folder+'/'+$model.Name)) -Force
+}
 
 $compilerSetup=Join-Path $cloud 'inno-setup.exe'
 Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe' -OutFile $compilerSetup

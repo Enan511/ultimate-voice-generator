@@ -21,6 +21,9 @@ jobs:
       RELEASE_TAG: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 8.0.422
       - name: Restore verified packages, upload and publish
         shell: pwsh
         run: ./scripts/assemble-cloud-release.ps1 -Tag $env:RELEASE_TAG
